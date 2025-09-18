@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="ka">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Cache-Control"
+      content="no-cache, no-store, must-revalidate"
+    />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>TiFlowers Loyalty Program</title>
+
+    <!-- Georgian font (make sure files exist on your server) -->
+    <link
+      rel="preload"
+      href="/public/fonts/bpg_nino_mtavruli_bold.ttf"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <!-- Latin fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* === Fonts === */
+      @font-face {
+        font-family: "BPG Nino Mtavruli";
+        src: url("/fonts/bpg_nino_mtavruli_bold.woff2") format("woff2"),
+          url("/fonts/bpg_nino_mtavruli_bold.ttf") format("truetype");
+        font-weight: 700;
+        font-style: normal;
+        font-display: swap;
+        unicode-range: U+10A0-10FF, U+2D00-2D2F, U+1C90-1CBF; /* Georgian */
+      }
+
+      /* === Base === */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --primary-black: #000000;
+        --soft-black: #1a1a1a;
+        --charcoal: #2d2d2d;
+        --warm-white: #fdfcf8;
+        --gold: #51503b;
+        --grey-light: #a8a8a8;
+        --grey-medium: #666666;
+        --error: #dc3545;
+        --success: #000000;
+        --gap-xxs: 0.5rem;
+        --gap-xs: 0.75rem;
+        --gap-sm: 1rem;
+        --gap-md: 1.25rem;
+        --gap-lg: 1.5rem;
+        --gap-xl: 2rem;
+      }
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        background: var(--primary-black);
+        color: var(--warm-white);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--gap-xl) var(--gap-sm);
+        line-height: 1.6;
+        letter-spacing: -0.01em;
+      }
+      .container {
+        width: 100%;
+        max-width: 420px;
+        margin: 0 auto;
+      }
+
+      /* === Card === */
+      .card {
+        background: linear-gradient(
+          135deg,
+          var(--soft-black) 0%,
+          var(--charcoal) 100%
+        );
+        border-radius: 2px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8),
+          0 1px 0 rgba(255, 255, 255, 0.05) inset;
+        overflow: hidden;
+        position: relative;
+      }
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--gold),
+          transparent
+        );
+      }
+      .card-header {
+        padding: 2.25rem 2rem 1.25rem;
+        background: linear-gradient(180deg, var(--soft-black), transparent);
+        display: grid;
+        place-items: center;
+        gap: var(--gap-sm);
+        text-align: center;
+      }
+      .logo {
+        max-width: 140px;
+        width: 100%;
+        height: auto;
+        filter: brightness(1.05) contrast(1.02);
+      }
+      .card-title {
+        font-family: "Playfair Display", serif;
+        font-size: 2rem;
+        font-weight: 400;
+        color: var(--warm-white);
+        letter-spacing: 0.02em;
+        line-height: 1.2;
+      }
+      .success-title {
+        color: var(--gold);
+      }
+      .card-description {
+        color: var(--grey-light);
+        font-size: 0.95rem;
+      }
+      .card-content {
+        padding: 0 2rem 2rem;
+      }
+
+      /* === Language Switch === */
+      .language-switch {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--gap-xxs);
+        margin-bottom: var(--gap-md);
+        padding: 0.25rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 2px;
+      }
+      .lang-btn {
+        padding: 0.625rem 1rem;
+        background: transparent;
+        border: none;
+        border-radius: 1px;
+        color: var(--grey-light);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        cursor: pointer;
+        transition: 0.25s;
+      }
+      .lang-btn.active {
+        background: var(--gold);
+        color: var(--primary-black);
+        font-weight: 600;
+      }
+      .lang-btn:hover:not(.active) {
+        background: rgba(255, 255, 255, 0.06);
+        color: #fff;
+      }
+
+      /* === Form === */
+      .form-group {
+        margin-bottom: 1.25rem;
+      }
+      .label {
+        display: block;
+        font-size: 0.78rem;
+        font-weight: 600;
+        margin-bottom: 0.6rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .input {
+        width: 100%;
+        padding: 0.9rem 1rem;
+        min-height: 3rem;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--warm-white);
+        font-size: 1rem;
+        transition: 0.25s;
+      }
+      .input::placeholder {
+        color: var(--grey-medium);
+      }
+      .input:focus {
+        outline: none;
+        border-color: var(--gold);
+        box-shadow: 0 0 0 1px var(--gold);
+      }
+      .input.error {
+        border-color: var(--error);
+        box-shadow: 0 0 0 1px var(--error);
+      }
+      .error-message {
+        color: var(--error);
+        font-size: 0.8rem;
+        margin-top: 0.45rem;
+      }
+
+      .submit-btn {
+        width: 100%;
+        min-height: 3.25rem;
+        display: inline-grid;
+        place-items: center;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        background: linear-gradient(135deg, var(--gold), var(--gold));
+        color: var(--primary-black);
+        transition: 0.25s;
+        position: relative;
+        overflow: hidden;
+      }
+      .submit-btn::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        transform: translateX(-100%);
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.25),
+          transparent
+        );
+        transition: 0.6s;
+      }
+      .submit-btn:hover::before {
+        transform: translateX(100%);
+      }
+      .submit-btn:hover {
+        transform: translateY(-1px);
+      }
+      .submit-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      .spinner {
+        width: 1.1rem;
+        height: 1.1rem;
+        border: 2px solid transparent;
+        border-top: 2px solid currentColor;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* === Sections & CTAs === */
+      .section {
+        display: grid;
+        gap: var(--gap-sm);
+        margin-top: var(--gap-lg);
+      }
+      .section-title {
+        font-family: "Playfair Display", serif;
+        font-size: 1.05rem;
+        font-weight: 400;
+        letter-spacing: 0.02em;
+      }
+      .reduction-code {
+        text-align: center;
+        margin: var(--gap-sm) 0 var(--gap-md);
+      }
+      .code-text {
+        font-family: "Playfair Display", serif;
+        font-size: 1.6rem;
+        letter-spacing: 0.12em;
+        color: var(--gold);
+        margin-bottom: 0.35rem;
+      }
+      .code-subtitle {
+        font-size: 0.88rem;
+        color: var(--grey-light);
+      }
+
+      /* Balanced CTA groups */
+      .cta-stack {
+        display: grid;
+        gap: var(--gap-xs);
+      }
+      .cta-group {
+        display: grid;
+        gap: var(--gap-xs);
+      }
+      .cta-cluster {
+        display: grid;
+        gap: var(--gap-md);
+      } /* space between groups to balance visuals */
+
+      .modern-btn {
+        display: inline-grid;
+        grid-auto-flow: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        padding: 1rem 1.25rem;
+        min-height: 3.25rem;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 700;
+        transition: 0.25s;
+      }
+      .modern-btn.neutral {
+        background: linear-gradient(135deg, #0c0c0c, #1a1a1a);
+        color: var(--warm-white);
+      }
+      .modern-btn.photo {
+        background: linear-gradient(135deg, var(--gold), var(--gold));
+        color: var(--primary-black);
+      }
+      .modern-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Icons */
+      .icon {
+        width: 1.2rem;
+        height: 1.2rem;
+        display: inline-block;
+        vertical-align: -2px;
+      }
+
+      /* Georgian font usage (titles/buttons) */
+      :lang(ka) .card-title,
+      :lang(ka) .section-title,
+      :lang(ka) .label,
+      :lang(ka) .submit-btn,
+      :lang(ka) .lang-btn {
+        font-family: "BPG Nino Mtavruli", "Noto Sans Georgian", "Inter",
+          sans-serif;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      /* Toast */
+      .toast {
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        z-index: 1000;
+        padding: 1.1rem 1.25rem;
+        border-radius: 2px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+        background: var(--success);
+        color: #fff;
+        max-width: 24rem;
+      }
+
+      @media (max-width: 480px) {
+        .card-header {
+          padding: 1.75rem 1.5rem 1rem;
+        }
+        .card-content {
+          padding: 0 1.5rem 1.5rem;
+        }
+        .logo {
+          max-width: 120px;
+        }
+        .card-title {
+          font-size: 1.75rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Minimal icon sprite -->
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      style="position: absolute; width: 0; height: 0; overflow: hidden"
+    >
+      <!-- Telegram -->
+      <symbol id="i-telegram" viewBox="0 0 100 100">
+        <path
+          d="M88.723,12.142C76.419,17.238,23.661,39.091,9.084,45.047c-9.776,3.815-4.053,7.392-4.053,7.392
+        s8.345,2.861,15.499,5.007c7.153,2.146,10.968-0.238,10.968-0.238l33.62-22.652c11.922-8.107,9.061-1.431,6.199,1.431
+        c-6.199,6.2-16.452,15.975-25.036,23.844c-3.815,3.338-1.908,6.199-0.238,7.63c6.199,5.246,23.129,15.976,24.082,16.691
+        c5.037,3.566,14.945,8.699,16.452-2.146c0,0,5.961-37.435,5.961-37.435c1.908-12.637,3.815-24.321,4.053-27.659
+        C97.307,8.804,88.723,12.142,88.723,12.142z"
+          fill="currentColor"
+        />
+      </symbol>
+      <!-- WhatsApp -->
+      <symbol id="i-whatsapp" viewBox="0 0 512 512">
+        <path
+          d="M255.999,512c-25.934,0-51.961-4.332-77.361-12.875c-7.966-2.68-12.251-11.309-9.571-19.274
+        c2.678-7.966,11.305-12.254,19.274-9.571c22.267,7.49,45.03,11.286,67.659,11.286c124.377,0,225.565-102.089,225.565-227.572
+        c0.002-123.271-101.637-223.56-226.568-223.56c-123.823,0-224.563,100.289-224.563,223.56c0,43.274,11.989,85.16,34.672,121.139
+        l5.913,8.87c2.442,3.666,3.179,8.211,2.015,12.46l-16.162,59.025l60.92-15.584c8.144-2.086,16.43,2.829,18.514,10.97
+        c2.083,8.143-2.829,16.431-10.97,18.514l-86.28,22.072c-5.253,1.344-10.821-0.208-14.622-4.074s-5.259-9.459-3.827-14.687
+        l21.243-77.585l-2.173-3.259c-0.068-0.103-0.137-0.208-0.204-0.315C13.65,350.655,0,303.091,0,253.994
+        c0-68.07,26.535-131.939,74.717-179.841C122.813,26.334,186.837,0,254.996,0c68.356,0,132.71,26.173,181.205,73.699
+        C485.081,121.6,512,185.63,512,253.992c0,68.482-26.824,133.176-75.532,182.162C387.837,485.064,323.745,512,255.999,512z"
+          fill="#252323"
+        />
+        <path
+          d="M399.217,353.076l4.634-15.273c1.482-4.351-0.274-10.09-4.532-12.685l-67.288-38.073
+        c-4.258-2.593-9.905-1.948-13.609,2.217l-30.747,33.223c-2.407,2.036-5.833,2.867-9.072,1.478
+        c-11.254-5.064-35.944-16.411-54.297-34.765l0.003-0.003c-0.254-0.25-0.501-0.501-0.753-0.75c-0.25-0.253-0.501-0.499-0.75-0.753
+        l-0.003,0.003c-19.138-19.138-29.702-43.043-34.765-54.297c-1.389-3.24-0.558-6.665,1.478-9.072l33.223-30.747
+        c4.165-3.704,4.81-9.352,2.217-13.609l-38.073-67.288c-2.593-4.258-8.334-6.014-12.685-4.532l-15.273,4.634
+        c-16.384,4.728-31.099,16.026-39.795,32.415c-10.545,21.018-14.054,45.922-2.564,76.283c19.287,51.196,45.82,86.259,66.758,107.196
+        c20.937,20.937,56,47.469,107.196,66.758c30.361,11.49,55.263,7.981,76.283-2.564C383.19,384.175,394.489,369.46,399.217,353.076z"
+          fill="#5b7552"
+        />
+        <path
+          d="M326.998,417.787c-0.002,0-0.003,0-0.005,0c-13.54,0-27.625-2.733-41.862-8.121
+        c-56.146-21.153-92.209-49.867-112.57-70.229c-20.362-20.36-49.076-56.423-70.237-112.592c-11.749-31.04-10.673-60.813,3.203-88.47
+        c0.052-0.103,0.105-0.207,0.158-0.309c10.239-19.298,28.062-33.826,48.91-39.873l14.993-4.55c2.503-0.817,5.142-1.231,7.847-1.231
+        c9.2,0,17.798,4.732,22.439,12.35c0.085,0.14,0.167,0.282,0.25,0.425l37.978,67.12c6.274,10.571,4.141,24.171-5.117,32.519
+        l-29.022,26.858c5.2,11.338,14.549,30.101,29.36,45.012c0.119,0.114,0.236,0.228,0.35,0.347l1.28,1.28
+        c0.117,0.114,0.233,0.231,0.347,0.35c14.476,14.369,34.119,24.297,45.021,29.354l26.85-29.013c5.002-5.548,12.058-8.725,19.388-8.725
+        c4.62,0,9.153,1.246,13.131,3.608l67.12,37.978c0.143,0.081,0.285,0.164,0.425,0.25c10.031,6.113,14.774,19.082,11.119,30.285
+        l-4.55,14.995c-6.047,20.849-20.575,38.671-39.873,48.91c-0.102,0.055-0.204,0.107-0.309,0.158
+        C358.659,413.98,342.972,417.787,326.998,417.787z M132.651,152.183c-9.966,19.968-10.573,40.877-1.853,63.911
+        c20.27,53.803,48.35,86.887,63.286,101.823c14.935,14.935,48.02,43.017,101.801,63.278c10.804,4.089,21.264,6.158,31.111,6.158h0.003
+        c11.294,0,22.03-2.617,32.818-8.004c12.012-6.426,21.039-17.53,24.779-30.492c0.02-0.067,0.038-0.134,0.059-0.199l3.717-12.25
+        l-60.938-34.48l-28.59,30.893c-0.421,0.455-0.87,0.884-1.344,1.284c-4.395,3.714-9.928,5.761-15.584,5.761
+        c-3.209,0-6.342-0.645-9.313-1.919c-0.082-0.035-0.163-0.072-0.245-0.108c-10.407-4.682-38.053-17.121-58.813-37.883
+        c-0.078-0.078-0.154-0.155-0.228-0.234l-0.457-0.453c-0.043-0.043-0.087-0.087-0.129-0.129l-0.453-0.457
+        c-0.079-0.075-0.157-0.152-0.234-0.228c-20.782-20.782-32.152-46.069-37.616-58.222l-0.266-0.592
+        c-0.037-0.082-0.072-0.163-0.108-0.245c-3.573-8.33-2.1-17.869,3.844-24.898c0.4-0.473,0.829-0.921,1.283-1.342l30.893-28.59
+        l-34.48-60.938l-12.25,3.717c-0.065,0.02-0.132,0.04-0.199,0.059C150.181,131.144,139.077,140.169,132.651,152.183z"
+      fill="#252323"
+    />
+      <!-- Instagram -->
+      <symbol id="i-instagram" viewBox="0 0 24 24">
+        <path
+          d="M16.65 7.2H16.66M8 20H16C18.2091 20 20 18.2091 20 16V8C20 5.79086 18.2091 4 16 4H8C5.79086 4 4 5.79086 4 8V16C4 18.2091 5.79086 20 8 20ZM15.75 12C15.75 14.0711 14.0711 15.75 12 15.75C9.92893 15.75 8.25 14.0711 8.25 12C8.25 9.92893 9.92893 8.25 12 8.25C14.0711 8.25 15.75 9.92893 15.75 12Z"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          fill="none"
+        />
+      </symbol>
+    </svg>
+
+    <div class="container">
+      <!-- Registration -->
+      <div id="registrationForm" class="card">
+        <div class="card-header">
+          <img
+            src="/public/assets/tiflowers.png"
+            alt="TiFlowers"
+            class="logo"
+          />
+          <h1 id="cardTitle" class="card-title">
+            შემოუერთდი ლოიალობის პროგრამას
+          </h1>
+          <p id="cardDescription" class="card-description">
+            დარეგისტრირდი ახლავე — ექსკლუზიური შეთავაზებები გელოდება
+          </p>
+        </div>
+
+        <div class="card-content">
+          <div class="language-switch">
+            <button
+              class="lang-btn"
+              data-lang="en"
+              onclick="switchLanguage(this, 'en')"
+            >
+              English
+            </button>
+            <button
+              class="lang-btn active"
+              data-lang="ka"
+              onclick="switchLanguage(this, 'ka')"
+            >
+              ქართული
+            </button>
+          </div>
+
+          <form id="loyaltyForm" onsubmit="handleSubmit(event)">
+            <div class="form-group">
+              <label id="firstNameLabel" class="label" for="firstName"
+                >სახელი</label
+              >
+              <input
+                id="firstName"
+                class="input"
+                type="text"
+                placeholder="შეიყვანე შენი სახელი"
+                required
+                autocomplete="given-name"
+              />
+              <div id="firstNameError" class="error-message hidden"></div>
+            </div>
+
+            <div class="form-group">
+              <label id="lastNameLabel" class="label" for="lastName"
+                >გვარი</label
+              >
+              <input
+                id="lastName"
+                class="input"
+                type="text"
+                placeholder="შეიყვანე შენი გვარი"
+                required
+                autocomplete="family-name"
+              />
+              <div id="lastNameError" class="error-message hidden"></div>
+            </div>
+
+            <div class="form-group">
+              <label id="phoneLabel" class="label" for="phone">ტელეფონი</label>
+              <input
+                id="phone"
+                class="input"
+                type="tel"
+                placeholder="+995551234567"
+                required
+                inputmode="tel"
+                autocomplete="tel"
+              />
+              <div id="phoneError" class="error-message hidden"></div>
+            </div>
+
+            <button id="submitBtn" class="submit-btn" type="submit">
+              <span id="submitText">რეგისტრაცია</span>
+              <div id="spinner" class="spinner hidden"></div>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Success -->
+      <div id="successMessage" class="card hidden">
+        <div class="card-header">
+          <img
+            src="/public/assets/tiflowers.png"
+            alt="TiFlowers"
+            class="logo"
+          />
+          <h1 id="successTitle" class="card-title success-title">
+            რეგისტრაცია წარმატებულია!
+          </h1>
+          <p id="successDescription" class="card-description">
+            კეთილი იყოს შენი მობრძანება
+          </p>
+        </div>
+
+        <div class="card-content">
+          <div class="reduction-code">
+            <div id="reductionCode" class="code-text">
+              მიიღე 20%-იანი კოდი ჩატში
+            </div>
+            <div id="codeSubtitle" class="code-subtitle">
+              გამოგვიგზავნე შეძენის დამადასტურებელი ფოტო და დააგროვე ქულები
+            </div>
+          </div>
+
+          <!-- Balanced clusters: Social (3) + Send (2) -->
+          <div class="cta-cluster">
+            <!-- Stay Connected -->
+            <div class="section">
+              <h3 id="joinChannelsTitle" class="section-title">
+                დარჩი კონტაქტზე
+              </h3>
+              <div class="cta-stack">
+                <button
+                  onclick="handleTelegramJoin()"
+                  class="modern-btn neutral"
+                  id="telegramJoinBtn"
+                >
+                  <svg class="icon" aria-hidden="true">
+                    <use href="#i-telegram"></use>
+                  </svg>
+                  <span id="telegramJoinLabel">შემოუერთდი Telegram არხს</span>
+                </button>
+                <button
+                  onclick="handleWhatsAppJoin()"
+                  class="modern-btn neutral"
+                  id="whatsappJoinBtn"
+                >
+                  <svg class="icon" aria-hidden="true">
+                    <use href="#i-whatsapp"></use>
+                  </svg>
+                  <span id="whatsappJoinLabel">შემოუერთდი WhatsApp ჯგუფს</span>
+                </button>
+                <button
+                  onclick="handleInstagramFollow()"
+                  class="modern-btn neutral"
+                  id="instagramFollowBtn"
+                >
+                  <svg class="icon" aria-hidden="true">
+                    <use href="#i-instagram"></use>
+                  </svg>
+                  <span id="instagramFollowLabel">გამოგვყევი Instagram-ზე</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Send Photo -->
+            <div class="section">
+              <h3 id="photoSectionTitle" class="section-title">
+                გამოგვიგზავნე ფოტო
+              </h3>
+              <div class="cta-stack">
+                <button
+                  onclick="openTelegramBot()"
+                  class="modern-btn photo"
+                  id="sendTelegramBtn"
+                >
+                  <svg class="icon" aria-hidden="true">
+                    <use href="#i-telegram"></use>
+                  </svg>
+                  <span id="sendTelegramLabel">გაგზავნა Telegram-ით</span>
+                </button>
+                <button
+                  onclick="openWhatsApp()"
+                  class="modern-btn photo"
+                  id="sendWhatsAppBtn"
+                >
+                  <svg class="icon" aria-hidden="true">
+                    <use href="#i-whatsapp"></use>
+                  </svg>
+                  <span id="sendWhatsAppLabel">გაგზავნა WhatsApp-ით</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inline Toast -->
+      <div id="registrationConfirmation" class="toast hidden">
+        <strong id="confirmationTitle"></strong>
+        <div id="confirmationSubtitle"></div>
+      </div>
+    </div>
+
+    <script>
+      // Default language (KA)
+      let currentLanguage = localStorage.getItem("loyalty_lang") || "ka";
+      document.documentElement.setAttribute("lang", currentLanguage);
+      let isLoading = false;
+
+      // Config (ensure matches your n8n webhook)
+      const WEBHOOK_URL = "https://n8n.ninadnj.me/webhook/TIFLOWERS";
+      const TELEGRAM_CHANNEL_URL = "https://t.me/FLOWERVENDING";
+      const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/your_group_invite";
+      const INSTAGRAM_URL = "https://instagram.com/tiflowers";
+      const TELEGRAM_BOT_URL = "https://t.me/DNJAI_BOT?start=reg";
+      const WHATSAPP_BOT_URL =
+        "https://wa.me/995551234567?text=" +
+        encodeURIComponent(
+          "Hi TiFlowers 🌸 I want to send a purchase photo for loyalty points."
+        );
+
+      const translations = {
+        en: {
+          title: "Join the TiFlowers Club",
+          subtitle: "Register now — earn points, codes, and chic perks",
+          firstName: "First Name",
+          lastName: "Last Name",
+          phone: "Phone Number",
+          firstNamePlaceholder: "Enter your first name",
+          lastNamePlaceholder: "Enter your last name",
+          submitText: "Register Now",
+
+          successTitle: "Registration Successful!",
+          successSubtitle: "Welcome in —  deals start now ",
+          codeTitle: "Get your 20% code in chat",
+          codeSubtitle:
+            "Send a purchase photo — we’ll verify and reply with your code.",
+
+          joinChannelsTitle: "Stay Connected",
+          telegramJoinLabel: "Join Telegram Channel",
+          whatsappJoinLabel: "Join WhatsApp Group",
+          instagramFollowLabel: "Follow us on Instagram",
+
+          photoSectionTitle: "Send Your Purchase Photo",
+          sendTelegramLabel: "Send via Telegram",
+          sendWhatsAppLabel: "Send via WhatsApp",
+
+          errors: {
+            firstName: "First name is required",
+            lastName: "Last name is required",
+            phone: "Please enter a valid phone number (e.g., +995551234567)",
+          },
+        },
+        ka: {
+          title: "შემოუერთდი ლოიალობის პროგრამას",
+          subtitle: "დარეგისტრირდი ახლავე — მიიღე ექსკლუზიური შეთავაზებები",
+          firstName: "სახელი",
+          lastName: "გვარი",
+          phone: "ტელეფონი",
+          firstNamePlaceholder: "შეიყვანე შენი სახელი",
+          lastNamePlaceholder: "შეიყვანე შენი გვარი",
+          submitText: "რეგისტრაცია",
+
+          successTitle: "რეგისტრაცია წარმატებულია!",
+          successSubtitle: "კეთილი იყოს შენი მობრძანება ",
+          codeTitle: "მიიღე 20%-იანი ფასდაკლების კოდი ჩატში",
+          codeSubtitle: "გააგზავნე შეძენის ფოტო და მიიღე კოდი.",
+
+          joinChannelsTitle: "დარჩი კონტაქტზე",
+          telegramJoinLabel: "შემოუერთდი Telegram არხს",
+          whatsappJoinLabel: "შემოუერთდი WhatsApp ჯგუფს",
+          instagramFollowLabel: "გამოგვყევი Instagram-ზე",
+
+          photoSectionTitle: "გააგზავნე შეძენის ფოტო",
+          sendTelegramLabel: "გაგზავნა Telegram-ით",
+          sendWhatsAppLabel: "გაგზავნა WhatsApp-ით",
+
+          errors: {
+            firstName: "სახელი აუცილებელია",
+            lastName: "გვარი აუცილებელია",
+            phone: "შეიყვანე სწორი ნომერი (მაგ.: +995551234567)",
+          },
+        },
+      };
+
+      // Helpers
+      const $ = (id) => document.getElementById(id);
+      const setText = (id, text) => {
+        const el = $(id);
+        if (el) el.textContent = text;
+      };
+      const setPlaceholder = (id, text) => {
+        const el = $(id);
+        if (el) el.placeholder = text;
+      };
+
+      function switchLanguage(btn, lang) {
+        currentLanguage = lang;
+        localStorage.setItem("loyalty_lang", lang);
+        document.documentElement.setAttribute("lang", lang);
+        document
+          .querySelectorAll(".lang-btn")
+          .forEach((b) =>
+            b.classList.toggle("active", b.dataset.lang === lang)
+          );
+        applyTranslations();
+      }
+
+      function applyTranslations() {
+        const t = translations[currentLanguage];
+        // Registration
+        setText("cardTitle", t.title);
+        setText("cardDescription", t.subtitle);
+        setText("firstNameLabel", t.firstName);
+        setText("lastNameLabel", t.lastName);
+        setText("phoneLabel", t.phone);
+        setPlaceholder("firstName", t.firstNamePlaceholder);
+        setPlaceholder("lastName", t.lastNamePlaceholder);
+        setText("submitText", t.submitText);
+
+        // Success
+        setText("successTitle", t.successTitle);
+        setText("successDescription", t.successSubtitle);
+        setText("reductionCode", t.codeTitle);
+        setText("codeSubtitle", t.codeSubtitle);
+
+        // CTAs
+        setText("joinChannelsTitle", t.joinChannelsTitle);
+        setText("telegramJoinLabel", t.telegramJoinLabel);
+        setText("whatsappJoinLabel", t.whatsappJoinLabel);
+        setText("instagramFollowLabel", t.instagramFollowLabel);
+        setText("photoSectionTitle", t.photoSectionTitle);
+        setText("sendTelegramLabel", t.sendTelegramLabel);
+        setText("sendWhatsAppLabel", t.sendWhatsAppLabel);
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".lang-btn").forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.lang === currentLanguage);
+        });
+        applyTranslations();
+      });
+
+      // Submit
+      async function handleSubmit(event) {
+        event.preventDefault();
+        if (isLoading) return;
+
+        const submitBtn = $("submitBtn");
+        const submitTextEl = $("submitText");
+        const spinner = $("spinner");
+
+        // reset errors
+        document
+          .querySelectorAll(".error-message")
+          .forEach((e) => e.classList.add("hidden"));
+        document
+          .querySelectorAll(".input")
+          .forEach((i) => i.classList.remove("error"));
+
+        const formData = {
+          firstName: $("firstName").value.trim(),
+          lastName: $("lastName").value.trim(),
+          phone: $("phone")
+            .value.trim()
+            .replace(/[\s\-\(\)]/g, ""),
+          language: currentLanguage,
+          timestamp: new Date().toISOString(),
+          source: "loyalty_program_form",
+        };
+
+        const t = translations[currentLanguage];
+        let hasErrors = false;
+
+        if (!formData.firstName) {
+          hasErrors = true;
+          setText("firstNameError", t.errors.firstName);
+          $("firstNameError").classList.remove("hidden");
+          $("firstName").classList.add("error");
+        }
+        if (!formData.lastName) {
+          hasErrors = true;
+          setText("lastNameError", t.errors.lastName);
+          $("lastNameError").classList.remove("hidden");
+          $("lastName").classList.add("error");
+        }
+        if (!/^\+\d{7,15}$/.test(formData.phone)) {
+          hasErrors = true;
+          setText("phoneError", t.errors.phone);
+          $("phoneError").classList.remove("hidden");
+          $("phone").classList.add("error");
+        }
+        if (hasErrors) return;
+
+        isLoading = true;
+        submitBtn.disabled = true;
+        submitTextEl.textContent = t.submitText + "...";
+        spinner.classList.remove("hidden");
+
+        try {
+          const response = await fetch(WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData),
+          });
+          if (!response.ok)
+            throw new Error(
+              `HTTP ${response.status} – ${await response.text()}`
+            );
+
+          let result = {};
+          try {
+            result = await response.json();
+          } catch (_) {}
+
+          // Swap to success view
+          $("registrationForm").classList.add("hidden");
+          $("successMessage").classList.remove("hidden");
+
+          // Optional dynamic code from n8n
+          if (result && result.reductionCode)
+            setText("reductionCode", result.reductionCode);
+
+          // Inline toast
+          setText("confirmationTitle", t.successTitle);
+          setText("confirmationSubtitle", t.successSubtitle);
+          const toast = $("registrationConfirmation");
+          toast.classList.remove("hidden");
+          setTimeout(() => toast.classList.add("hidden"), 3000);
+        } catch (err) {
+          console.error("❌ Registration error:", err);
+          alert("Registration failed. Please try again.");
+        } finally {
+          isLoading = false;
+          submitBtn.disabled = false;
+          submitTextEl.textContent = t.submitText;
+          spinner.classList.add("hidden");
+        }
+      }
+
+      // External actions
+      function openTelegramBot() {
+        window.open(TELEGRAM_BOT_URL, "_blank");
+      }
+      function openWhatsApp() {
+        window.open(WHATSAPP_BOT_URL, "_blank");
+      }
+      function handleTelegramJoin() {
+        window.open(TELEGRAM_CHANNEL_URL, "_blank");
+      }
+      function handleWhatsAppJoin() {
+        window.open(WHATSAPP_GROUP_URL, "_blank");
+      }
+      function handleInstagramFollow() {
+        window.open(INSTAGRAM_URL, "_blank");
+      }
+    </script>
+  </body>
+</html>
